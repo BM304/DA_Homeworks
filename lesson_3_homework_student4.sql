@@ -1,15 +1,15 @@
---схема БД: https://docs.google.com/document/d/1NVORWgdwlKepKq_b8SPRaSpraltxoMg2SIusTEN6mEQ/edit?usp=sharing
+--СЃС…РµРјР° Р‘Р”: https://docs.google.com/document/d/1NVORWgdwlKepKq_b8SPRaSpraltxoMg2SIusTEN6mEQ/edit?usp=sharing
 
 --task1
---Корабли: Для каждого класса определите число кораблей этого класса, потопленных в сражениях. 
---Вывести: класс и число потопленных кораблей.
+--РљРѕСЂР°Р±Р»Рё: Р”Р»СЏ РєР°Р¶РґРѕРіРѕ РєР»Р°СЃСЃР° РѕРїСЂРµРґРµР»РёС‚Рµ С‡РёСЃР»Рѕ РєРѕСЂР°Р±Р»РµР№ СЌС‚РѕРіРѕ РєР»Р°СЃСЃР°, РїРѕС‚РѕРїР»РµРЅРЅС‹С… РІ СЃСЂР°Р¶РµРЅРёСЏС…. 
+--Р’С‹РІРµСЃС‚Рё: РєР»Р°СЃСЃ Рё С‡РёСЃР»Рѕ РїРѕС‚РѕРїР»РµРЅРЅС‹С… РєРѕСЂР°Р±Р»РµР№.
  
 select 
 case 
 	when class is not null
 		then class
-		else 'Класс не определен'
-end класс,
+		else 'РљР»Р°СЃСЃ РЅРµ РѕРїСЂРµРґРµР»РµРЅ'
+end РєР»Р°СЃСЃ,
 count (t1.result)
 from 
 	(SELECT 
@@ -19,12 +19,12 @@ from
 	full outer join ships s on cl.class = s.class
 	full outer join Outcomes o on o.ship = s.name
 	where result='sunk') as t1	
-group by (класс, t1.result)
+group by (РєР»Р°СЃСЃ, t1.result)
 
 --task2
---Корабли: Для каждого класса определите год, когда был спущен на воду первый корабль этого класса. 
---Если год спуска на воду головного корабля неизвестен, определите минимальный год спуска на воду кораблей этого класса. 
---Вывести: класс, год.
+--РљРѕСЂР°Р±Р»Рё: Р”Р»СЏ РєР°Р¶РґРѕРіРѕ РєР»Р°СЃСЃР° РѕРїСЂРµРґРµР»РёС‚Рµ РіРѕРґ, РєРѕРіРґР° Р±С‹Р» СЃРїСѓС‰РµРЅ РЅР° РІРѕРґСѓ РїРµСЂРІС‹Р№ РєРѕСЂР°Р±Р»СЊ СЌС‚РѕРіРѕ РєР»Р°СЃСЃР°. 
+--Р•СЃР»Рё РіРѕРґ СЃРїСѓСЃРєР° РЅР° РІРѕРґСѓ РіРѕР»РѕРІРЅРѕРіРѕ РєРѕСЂР°Р±Р»СЏ РЅРµРёР·РІРµСЃС‚РµРЅ, РѕРїСЂРµРґРµР»РёС‚Рµ РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РіРѕРґ СЃРїСѓСЃРєР° РЅР° РІРѕРґСѓ РєРѕСЂР°Р±Р»РµР№ СЌС‚РѕРіРѕ РєР»Р°СЃСЃР°. 
+--Р’С‹РІРµСЃС‚Рё: РєР»Р°СЃСЃ, РіРѕРґ.
 
 with s_gr as 
 (
@@ -36,49 +36,67 @@ distinct
   case 
 	when cl.class=s.name then s.launched 
 	when cl.class=s_gr.class then min
-	-- не смогла добавить текст на else, вероятно,  есть формат столбца
-   end год    
+	-- РЅРµ СЃРјРѕРіР»Р° РґРѕР±Р°РІРёС‚СЊ С‚РµРєСЃС‚ РЅР° else, РІРµСЂРѕСЏС‚РЅРѕ,  РµСЃС‚СЊ С„РѕСЂРјР°С‚ СЃС‚РѕР»Р±С†Р°
+   end РіРѕРґ    
 FROM classes cl
 left join ships s  on cl.class =  s.class
 left join s_gr  on cl.class =  s_gr.class
 
 
 --task3
---Корабли: Для классов, имеющих потери в виде потопленных кораблей и не менее 3 кораблей в базе данных, 
---вывести имя класса и число потопленных кораблей.
-
+--РљРѕСЂР°Р±Р»Рё: Р”Р»СЏ РєР»Р°СЃСЃРѕРІ, РёРјРµСЋС‰РёС… РїРѕС‚РµСЂРё РІ РІРёРґРµ РїРѕС‚РѕРїР»РµРЅРЅС‹С… РєРѕСЂР°Р±Р»РµР№ Рё РЅРµ РјРµРЅРµРµ 3 РєРѕСЂР°Р±Р»РµР№ РІ Р±Р°Р·Рµ РґР°РЅРЅС‹С…, 
+--РІС‹РІРµСЃС‚Рё РёРјСЏ РєР»Р°СЃСЃР° Рё С‡РёСЃР»Рѕ РїРѕС‚РѕРїР»РµРЅРЅС‹С… РєРѕСЂР°Р±Р»РµР№.
+with count_ships_in_class as (
+	select 
+		s.class,
+		count(s.name) count1 
+	from ships s 
+	group by s.class)	
 select 
-case 
-	when class is not null
-		then class
-		else 'Класс не определен'
-end класс,
-count (t1.result)
+	t1.class,
+	count (t1.result)
 from 
 	(SELECT 
 		cl.class, 
 		o.result
 	FROM classes cl
-	full outer join ships s on cl.class = s.class
-	full outer join Outcomes o on o.ship = s.name
-	where result='sunk' _______________________) as t1		
-group by (класс, t1.result)
-
-
-
-(select count(s.name) from ships where cl.class = s.class group by s.class )>=3
+	join ships s on cl.class = s.class
+	join Outcomes o on o.ship = s.name
+	where result='sunk') as t1		
+where t1.class in (select count_ships_in_class.class from count_ships_in_class where count_ships_in_class.count1>=3)
+group by (t1.class, t1.result)
 
 --task4
---Корабли: Найдите названия кораблей, имеющих наибольшее число орудий среди всех кораблей такого же водоизмещения 
---(учесть корабли из таблицы Outcomes).
-
-
-
+--РљРѕСЂР°Р±Р»Рё: РќР°Р№РґРёС‚Рµ РЅР°Р·РІР°РЅРёСЏ РєРѕСЂР°Р±Р»РµР№, РёРјРµСЋС‰РёС… РЅР°РёР±РѕР»СЊС€РµРµ С‡РёСЃР»Рѕ РѕСЂСѓРґРёР№ СЃСЂРµРґРё РІСЃРµС… РєРѕСЂР°Р±Р»РµР№ С‚Р°РєРѕРіРѕ Р¶Рµ РІРѕРґРѕРёР·РјРµС‰РµРЅРёСЏ (СѓС‡РµСЃС‚СЊ РєРѕСЂР°Р±Р»Рё РёР· С‚Р°Р±Р»РёС†С‹ Outcomes).
+-- РўСЂРµР±РѕСЂРІР°РЅРёРµ "СѓС‡РµСЃС‚СЊ РєРѕСЂР°Р±Р»Рё РёР· С‚Р°Р±Р»РёС†С‹ Outcomes" РЅРµ РІС‹РїРѕР»РЅРµРЅРѕ РІ РІРёРґСѓ С‚РѕРіРѕ, С‡С‚Рѕ СЃРІСЏР·РєРё Outcomes Рё Classes РЅРµС‚, 
+-- СЃРІСЏР·РєР° С‡РµСЂРµР· Ships РёР·Р±С‹С‚РѕС‡РЅР° РїРѕСЃРєРѕР»СЊРєСѓ РµСЃР»Рё РІ ships РµСЃС‚СЊ РєРѕСЂР°Р±Р»СЊ - РѕРЅ Р±СѓРґРµС‚ РѕР±СЂР°Р±РѕС‚Р°РЅ Рё Р±РµР· С‚Р°Р±Р»РёС†С‹ outcomes,
+-- РµСЃРё РЅРµС‚ - С‚Рѕ Сѓ РЅР°СЃ РЅРµС‚ СЃРІСЏР·РєРё СЃ classes, Р° СЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РґР°РЅРЅС‹С… РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё РїРѕ СЂРµР±РѕР°РЅРёСЏРј Рє Р·Р°РґР°С‡Рµ  
+with group_displacement as (
+	select 
+		c.displacement,
+		max (c.numguns)
+	from classes c
+	group by c.displacement)
+select 
+	distinct (s.name)
+from ships s 
+join classes c on s.class=c.class
+join group_displacement gr on 	c.displacement =gr.displacement
+where c.numguns=gr.max
 
 --task5
---Компьютерная фирма: Найдите производителей принтеров, которые производят ПК с наименьшим объемом RAM и с самым быстрым процессором среди всех ПК,
--- имеющих наименьший объем RAM. Вывести: Maker
-
-
-
-
+--РљРѕРјРїСЊСЋС‚РµСЂРЅР°СЏ С„РёСЂРјР°: РќР°Р№РґРёС‚Рµ РїСЂРѕРёР·РІРѕРґРёС‚РµР»РµР№ РїСЂРёРЅС‚РµСЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ РїСЂРѕРёР·РІРѕРґСЏС‚ РџРљ СЃ РЅР°РёРјРµРЅСЊС€РёРј РѕР±СЉРµРјРѕРј RAM Рё СЃ СЃР°РјС‹Рј Р±С‹СЃС‚СЂС‹Рј РїСЂРѕС†РµСЃСЃРѕСЂРѕРј СЃСЂРµРґРё РІСЃРµС… РџРљ,
+-- РёРјРµСЋС‰РёС… РЅР°РёРјРµРЅСЊС€РёР№ РѕР±СЉРµРј RAM. Р’С‹РІРµСЃС‚Рё: Maker
+with Maker_printer as (
+	select 
+		distinct maker
+	from product p
+	where p.type='Printer')
+select
+	p.maker  
+from product p
+left join pc on p.model = pc.model 
+where pc.ram=(select min(pc.ram) from pc) 
+	and pc.speed = (select max(pc.speed) from pc 
+							where pc.ram=(select min(pc.ram) from pc)) 
+	and p.maker in (select * from Maker_printer)
