@@ -1,8 +1,8 @@
---схема БД: https://docs.google.com/document/d/1NVORWgdwlKepKq_b8SPRaSpraltxoMg2SIusTEN6mEQ/edit?usp=sharing
+--СЃС…РµРјР° Р‘Р”: https://docs.google.com/document/d/1NVORWgdwlKepKq_b8SPRaSpraltxoMg2SIusTEN6mEQ/edit?usp=sharing
 --colab/jupyter: https://colab.research.google.com/drive/1j4XdGIU__NYPVpv74vQa9HUOAkxsgUez?usp=sharing
 
 --task3  (lesson6)
---Компьютерная фирма: Найдите номер модели продукта (ПК, ПК-блокнота или принтера), имеющего самую высокую цену. Вывести: model
+--РљРѕРјРїСЊСЋС‚РµСЂРЅР°СЏ С„РёСЂРјР°: РќР°Р№РґРёС‚Рµ РЅРѕРјРµСЂ РјРѕРґРµР»Рё РїСЂРѕРґСѓРєС‚Р° (РџРљ, РџРљ-Р±Р»РѕРєРЅРѕС‚Р° РёР»Рё РїСЂРёРЅС‚РµСЂР°), РёРјРµСЋС‰РµРіРѕ СЃР°РјСѓСЋ РІС‹СЃРѕРєСѓСЋ С†РµРЅСѓ. Р’С‹РІРµСЃС‚Рё: model
 
 with all_price as (
 	select p.maker, p.model, p.type, l.price from product p
@@ -20,7 +20,7 @@ where price = (select max (price) from  all_price)
 	
 
 --task5  (lesson6)
--- Компьютерная фирма: Создать таблицу all_products_with_index_task5 как объединение всех данных по ключу code (union all) и сделать флаг (flag) по цене > максимальной по принтеру. Также добавить нумерацию (через оконные функции) по каждой категории продукта в порядке возрастания цены (price_index). По этому price_index сделать индекс
+-- РљРѕРјРїСЊСЋС‚РµСЂРЅР°СЏ С„РёСЂРјР°: РЎРѕР·РґР°С‚СЊ С‚Р°Р±Р»РёС†Сѓ all_products_with_index_task5 РєР°Рє РѕР±СЉРµРґРёРЅРµРЅРёРµ РІСЃРµС… РґР°РЅРЅС‹С… РїРѕ РєР»СЋС‡Сѓ code (union all) Рё СЃРґРµР»Р°С‚СЊ С„Р»Р°Рі (flag) РїРѕ С†РµРЅРµ > РјР°РєСЃРёРјР°Р»СЊРЅРѕР№ РїРѕ РїСЂРёРЅС‚РµСЂСѓ. РўР°РєР¶Рµ РґРѕР±Р°РІРёС‚СЊ РЅСѓРјРµСЂР°С†РёСЋ (С‡РµСЂРµР· РѕРєРѕРЅРЅС‹Рµ С„СѓРЅРєС†РёРё) РїРѕ РєР°Р¶РґРѕР№ РєР°С‚РµРіРѕСЂРёРё РїСЂРѕРґСѓРєС‚Р° РІ РїРѕСЂСЏРґРєРµ РІРѕР·СЂР°СЃС‚Р°РЅРёСЏ С†РµРЅС‹ (price_index). РџРѕ СЌС‚РѕРјСѓ price_index СЃРґРµР»Р°С‚СЊ РёРЅРґРµРєСЃ
 	
 create table all_products_with_index_task5 as
 select 
@@ -58,9 +58,9 @@ from (
 	from product  
 	join printer on product.model =printer.model) as t4
 		
-	-- проверка наличия таблицы:
+	-- РїСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ С‚Р°Р±Р»РёС†С‹:
 	select * from all_products_with_index_task5
 	
-	-- добавляем индекс
+	-- РґРѕР±Р°РІР»СЏРµРј РёРЅРґРµРєСЃ
 	create index price_index on all_products_with_index_task5 (price_index);
 	
