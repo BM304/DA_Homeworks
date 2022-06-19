@@ -1,117 +1,158 @@
--- Задание 20: Найдите средний размер hd PC каждого из тех производителей, которые выпускают и принтеры. Вывести: maker, средний размер HD.
-
-select pr.maker, avg(pc.hd) 
-from pc
-join product pr  on pr.model =pc.model  
-where  pr.maker in 
-	(select   pr.maker from product pr
-	 where pr.type='Printer')
-group by pr.maker
-
---схема БД: https://docs.google.com/document/d/1NVORWgdwlKepKq_b8SPRaSpraltxoMg2SIusTEN6mEQ/edit?usp=sharing
---colab/jupyter: https://colab.research.google.com/drive/1j4XdGIU__NYPVpv74vQa9HUOAkxsgUez?usp=sharing
-
--- Задание 1: Вывести name, class по кораблям, выпущенным после 1920
+--task1  (lesson8)
+-- oracle: https://leetcode.com/problems/department-top-three-salaries/
 select 
-	s.name,
-	s.class 
-from Ships s 
-where s.launched >1920
+    Department,
+    Employee,
+    Salary
+from
+   ( select
+      Department.name Department,
+      Employee.name Employee,
+      Salary ,
+      dense_RANK ( ) OVER (partition by Department.name order by  Salary desc) rank
+    from Employee 
+    left join Department on Employee.departmentId = Department.id ) table1
+where rank <=3
+/*Р РµР·СѓР»СЊС‚Р°С‚
+Accepted
+Runtime: 436 ms
+Your input
+{"headers": {"Employee": ["id", "name", "salary", "departmentId"], "Department": ["id", "name"]}, "rows": {"Employee": [[1, "Joe", 85000, 1], [2, "Henry", 80000, 2], [3, "Sam", 60000, 2], [4, "Max", 90000, 1], [5, "Janet", 69000, 1], [6, "Randy", 85000, 1], [7, "Will", 70000, 1]], "Department": [[1, "IT"], [2, "Sales"]]}}
+Output
+{"headers": ["DEPARTMENT", "EMPLOYEE", "SALARY"], "values": [["IT", "Max", 90000], ["IT", "Randy", 85000], ["IT", "Joe", 85000], ["IT", "Will", 70000], ["Sales", "Henry", 80000], ["Sales", "Sam", 60000]]}
+Expected
+{"headers": ["Department", "Employee", "Salary"], "values": [["IT", "Joe", 85000], ["Sales", "Henry", 80000], ["Sales", "Sam", 60000], ["IT", "Max", 90000], ["IT", "Randy", 85000], ["IT", "Will", 70000]]}
+*/
 
--- Задание 2: Вывести name, class по кораблям, выпущенным после 1920, но не позднее 1942
+--task2  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/17
 select 
-	s.name,
-	s.class
-from Ships s 
-where (s.launched >1920) and (s.launched <=1942) 
+    member_name,
+    status,
+    sum(amount *unit_price) as costs
+from FamilyMembers
+join Payments on FamilyMembers.member_id=Payments.family_member 
+where YEAR ( date )  ='2005'
+GROUP by  member_name, status
 
--- Задание 3: Какое количество кораблей в каждом классе. Вывести количество и class
+--task3  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/13
+select name 
+from (
+select name, count(*) as c
+from passenger 
+group by name
+) a 
+where c > 1
+
+--task4  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/38
+SELECT 
+    count(first_name ) as count
+from Student
+where first_name='Anna'
+group by first_name
+
+--task5  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/35
+SELECT 
+ count(*) as count
+from Schedule
+WHERE DATE_FORMAT(date ,'%d.%m.%Y')='02.09.2019'
+
+--task6  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/38
+/*РџРѕРІС‚РѕСЂ - task4 */
+SELECT 
+    count(first_name ) as count
+from Student
+where first_name='Anna'
+group by first_name
+
+--task7  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/32
+SELECT 
+FLOOR (avg(TIMESTAMPDIFF(year,birthday,current_date))) AS age
+FROM FamilyMembers
+
+--task8  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/27
 select 
-	s.class,
-	count(s.name)
-from Ships s 
-group by s.class
+    good_type_name good_type_name,
+    sum(amount *unit_price) as costs
+from Payments 
+left join Goods on  Payments.good=Goods.good_id 
+left join GoodTypes on Goods.type = GoodTypes.good_type_id 
+where YEAR (date)  ='2005'
+GROUP by  (good_type_name)
 
--- Задание 4: Для классов кораблей, калибр орудий которых не менее 16, укажите класс и страну. (таблица classes)
---
+--task9  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/37
+SELECT 
+ min(TIMESTAMPDIFF(year,birthday,current_date)) as year
+FROM Student
+
+--task10  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/44
+SELECT 
+     MAX(TIMESTAMPDIFF(year,birthday,current_date)) as max_year
+FROM Student
+left join Student_in_class on Student.id=Student_in_class.student
+left join Class on     Student_in_class.class = class.id
+where class.name like '%10%'
+
+
+--task11 (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/20
 select 
-	cl.class,
-	cl.country 
-from classes cl
-where cl.bore >=16
+    FamilyMembers.status,
+    FamilyMembers.member_name,
+    (amount *unit_price) as costs
+from FamilyMembers
+left join Payments on  FamilyMembers.member_id=Payments.family_member  
+left join Goods on  Payments.good=Goods.good_id 
+left join GoodTypes on Goods.type = GoodTypes.good_type_id 
+where GoodTypes.good_type_name  ='entertainment'
 
--- Задание 5: Укажите корабли, потопленные в сражениях в Северной Атлантике (таблица Outcomes, North Atlantic). Вывод: ship.
+--task12  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/55
+delete from Company
+where Company.id in(
+  select company FROM Trip
+  group by company
+  having count(id) = (
+	  select min(count) 
+	  from  (
+	  	select count(id) AS count 
+	    from Trip 
+	    group bycompany)  as min_count))
+
+--task13  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/45
+select classroom 
+from Schedule 
+group by (classroom) 
+having count(classroom)= 
+    (select count(classroom) 
+	from Schedule  
+	group by (classroom) 
+    order by count(classroom) desc  
+    limit 1) 
+    
+
+--task14  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/43
+select  last_name
+from Teacher
+left join Schedule on Teacher.id=Schedule.teacher 
+left join Subject on Schedule.subject =Subject.id 
+where Subject.name='Physical Culture'
+order by last_name
+
+
+--task15  (lesson8)
+-- https://sql-academy.org/ru/trainer/tasks/63
 select 
-	o.ship 
-from Outcomes o
-where o.battle='North Atlantic' and o.result='sunk' 
-
--- Задание 6: Вывести название (ship) последнего потопленного корабля
-select 
-	o.ship
-from Outcomes o
-join Battles b on o.battle = b.name
-where o.result='sunk' and b.date=(
-	select 
-		max(b.date) 
-	from Outcomes o join Battles b on o.battle = b.name 
-	where o.result='sunk')
-	
--- Задание 7: Вывести название корабля (ship) и класс (class) последнего потопленного корабля
-select 
-	o.ship ,
-	s.class
-from Outcomes o
-inner join Battles b on o.battle = b.name
-inner join ships s on o.ship = s.name
-where o.result='sunk' and b.date=(
-	select 
-		max(b.date) 
-	from Outcomes o 
-	inner join Battles b on o.battle = b.name
-	inner join ships s on o.ship = s.name
-	where o.result='sunk')
--- в виду замечания "В отношение Outcomes могут входить корабли, отсутствующие в отношении Ships" выборка проведена среди только существующих в обеих таблицах данных 
-
--- Задание 8: Вывести все потопленные корабли, у которых калибр орудий не менее 16, и которые потоплены. Вывод: ship, class
-select  
-	o.ship ,
-	cl.class
-from outcomes o 
-left join ships s on o.ship = s.name
-left join classes cl on s.class=cl.class
-where o.result='sunk' and cl.bore >=16
--- в виду замечания "В отношение Outcomes могут входить корабли, отсутствующие в отношении Ships" выборка проведена среди только существующих в обеих таблицах данных 
-
-
--- Задание 9: Вывести все классы кораблей, выпущенные США (таблица classes, country = 'USA'). Вывод: class
-select 
-	distinct (class)
-from classes
-where country = 'USA'
-
--- Задание 10: Вывести все корабли, выпущенные США (таблица classes & ships, country = 'USA'). Вывод: name, class
-select 
-	s.name,
-	s.class
-from ships s
-join classes cl on s.class=cl.class
-where cl.country = 'USA'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+concat (last_name, '.', LEFT(first_name, 1), '.', LEFT(middle_name, 1), '.') AS name
+from Student
+order by last_name, first_name,middle_name
